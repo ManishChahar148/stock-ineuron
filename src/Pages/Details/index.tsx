@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Details = () => {
   const navigate = useNavigate();
@@ -12,19 +13,19 @@ const Details = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoading(true)
+    setLoading(true);
     axios
       .get(`https://ineuron-stock-server.onrender.com/api/v1/data/${id}`)
       .then((res) => {
         setData(res?.data?.data);
-        setLoading(false)
+        setLoading(false);
       })
       .catch(() => {
-        setLoading(false)
+        setLoading(false);
       });
   }, []);
 
-  if(loading) return <h4>Loading...</h4>
+  if (loading) return <h4>Loading...</h4>;
 
   return (
     <div>
@@ -66,26 +67,43 @@ const Details = () => {
 
             if (type === "variable") {
               const vars = item.variable;
-              let text = item.text;
+              let text = item.text.split(" ");
               const keys = Object.keys(vars);
+              let val = "";
               keys.forEach((key) => {
                 if (vars[key]?.type === "value") {
-                  const val = vars[key]?.values[0];
-                  text = text.replaceAll(key, `<a id="vars" href="/variable/${key}/${idx}/${data?.id}" style="color:rgb(79 70 229/var(--tw-text-opacity))">${val }</a>`);
+                  val = vars[key]?.values[0];
                 }
 
                 if (vars[key].type === "indicator") {
-                  const val = vars[key].default_value;
-                  text = text.replaceAll(key, `<a id="vars" href="/variable/${key}/${idx}/${data?.id}" style="color:rgb(79 70 229/var(--tw-text-opacity))">${val }</a>`);
+                  val = vars[key].default_value;
                 }
+
+                text = text.map((str: string) => {
+                  if (str === key)
+                    return (
+                      <span id="vars" className="text-indigo-600">
+                        <Link
+                          id="vars"
+                          to={`/variable/${key}/${idx}/${data?.id}`}
+                        >
+                          {val}
+                        </Link>
+                      </span>
+                    );
+                  else return str;
+                });
               });
 
               return (
                 <li key={item?.text} className="flex py-4">
-                  <div
-                    className="font-medium text-gray-900"
-                    dangerouslySetInnerHTML={{ __html: text }}
-                  ></div>
+                  {text.map((word: any) => (
+                    <>
+                      {" "}
+                      {word}
+                      <span>&nbsp;</span>{" "}
+                    </>
+                  ))}
                 </li>
               );
             }
