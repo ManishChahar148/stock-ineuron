@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/no-redundant-roles */
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const [data, setData] = useState<Array<any>>([]);
@@ -23,8 +24,8 @@ const Dashboard = () => {
         <ul role="list" className="divide-y divide-gray-200">
           {data.map((row) => {
             return (
-              <li>
-                <a className="block hover:bg-gray-50" href={`/details/${row?.id}`}>
+              <li key={row.id}>
+                <Link className="block hover:bg-gray-50" to={`/details/${row?.id}`}>
                   <div className="flex items-center px-4 py-4 sm:px-6">
                     <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
                       <div className="truncate">
@@ -45,19 +46,16 @@ const Dashboard = () => {
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
-                        stroke-width="1.5"
                         stroke="currentColor"
                         className="h-5 w-5 text-gray-400"
                       >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
+                        <path                          
                           d="M8.25 4.5l7.5 7.5-7.5 7.5"
                         ></path>
                       </svg>
                     </div>
                   </div>
-                </a>
+                </Link>
               </li>
             );
           })}
