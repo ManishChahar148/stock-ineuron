@@ -5,15 +5,22 @@ import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const [data, setData] = useState<Array<any>>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true)
     axios
       .get("https://ineuron-stock-server.onrender.com/api/v1/data")
       .then((res) => {
         setData(res?.data?.data || []);
+        setLoading(false)
       })
-      .catch();
+      .catch(() => {
+        setLoading(false)
+      });
   }, []);
+
+  if(loading) return <h4>Loading...</h4>
 
   return (
     <>
@@ -37,7 +44,7 @@ const Dashboard = () => {
                       </div>
                     </div>
                     <div className="ml-16 flex flex-shrink-0">
-                      <p className={`bg-${row?.color}-100 text-${row?.color}-800 inline-flex rounded-full px-2 text-xs font-semibold leading-5`}>
+                      <p className={`${row?.color === 'green' ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"} inline-flex rounded-full px-2 text-xs font-semibold leading-5`}>
                         {row.tag}
                       </p>
                     </div>

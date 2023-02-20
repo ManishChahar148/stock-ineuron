@@ -4,6 +4,7 @@ import './App.css';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Dashboard from './Pages/Dashboard';
 import Details from './Pages/Details';
+import Variable from './Pages/Variables';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Dashboard />}></Route>
           <Route path="/details/:id" element={<Details />}></Route>
+          <Route path="/variable/:variable/:idx/:id" element={<Variable />}></Route>
         </Routes>
       </BrowserRouter>
     </div>

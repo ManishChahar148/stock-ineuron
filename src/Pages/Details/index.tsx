@@ -9,17 +9,22 @@ const Details = () => {
   const { id } = useParams();
 
   const [data, setData] = useState<any>({});
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true)
     axios
       .get(`https://ineuron-stock-server.onrender.com/api/v1/data/${id}`)
       .then((res) => {
-        console.log(res?.data?.data);
-
         setData(res?.data?.data);
+        setLoading(false)
       })
-      .catch();
+      .catch(() => {
+        setLoading(false)
+      });
   }, []);
+
+  if(loading) return <h4>Loading...</h4>
 
   return (
     <div>
@@ -49,7 +54,7 @@ const Details = () => {
         </div>
         <hr className="w-full border-[0.1px] border-gray-200 mt-5" />
         <ul role="list" className="divide-y divide-gray-200">
-          {data?.criteria?.map((item: any) => {
+          {data?.criteria?.map((item: any, idx: number) => {
             const type = item?.type;
             if (type === "plain_text") {
               return (
@@ -59,25 +64,28 @@ const Details = () => {
               );
             }
 
-            if(type === 'variable') {
+            if (type === "variable") {
               const vars = item.variable;
               let text = item.text;
               const keys = Object.keys(vars);
               keys.forEach((key) => {
-                if(vars[key]?.type === 'value') {
+                if (vars[key]?.type === "value") {
                   const val = vars[key]?.values[0];
-                  text = text.replaceAll(key, val);
+                  text = text.replaceAll(key, `<a id="vars" href="/variable/${key}/${idx}/${data?.id}" style="color:rgb(79 70 229/var(--tw-text-opacity))">${val }</a>`);
                 }
 
-                if(vars[key].type === 'indicator') {
+                if (vars[key].type === "indicator") {
                   const val = vars[key].default_value;
-                  text = text.replaceAll(key, val);
+                  text = text.replaceAll(key, `<a id="vars" href="/variable/${key}/${idx}/${data?.id}" style="color:rgb(79 70 229/var(--tw-text-opacity))">${val }</a>`);
                 }
-              })
+              });
 
               return (
                 <li key={item?.text} className="flex py-4">
-                  <p className="font-medium text-gray-900">{text}</p>
+                  <div
+                    className="font-medium text-gray-900"
+                    dangerouslySetInnerHTML={{ __html: text }}
+                  ></div>
                 </li>
               );
             }
